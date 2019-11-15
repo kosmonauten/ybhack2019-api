@@ -29,8 +29,11 @@ app.listen(port, () => {
 
 app.get('/users', user.getUsers)
 app.get('/users/:id', user.getUserById)
+app.get('/popularity/press', popularity.getMediaStats)
 app.get('/popularity/user/:id', popularity.getPopularityByUser)
 app.get('/popularity/press/:id', popularity.getPressByUser)
+app.get('/popularity/spider/:id', popularity.getPopularitySpider)
 app.get('/popularity/media/:id', popularity.getMediaByUser)
+app.get('/performance/spider/:id', performance.getPerformanceSpider)
 app.get('/performance/user/:id', performance.getPerformanceByUser)
 

@@ -70,19 +70,27 @@ const getPressByUser = (request, response) => {
     output = []
     output.push({
       "channel": "facebook",
-      "message": "<p>Cooles</p>"
+      "title": "Titlst",
+      "message": "kalsjfalökf",
+      "value": 0.22
     },
     {
       "channel": "twitter",
-      "message": "<p>Cooles</p>"
+      "title": "Titlst",
+      "message": "kalsjfalökf",
+      "value": -0.32
     },
     {
       "channel": "instagram",
-      "message": "<p>Cooles</p>"
+      "title": "Titlst",
+      "message": "kalsjfalökf",
+      "value": -0.56
     },
     {
       "channel": "yb",
-      "message": "<p>Cooles</p>"
+      "title": "Titlst",
+      "message": "kalsjfalökf",
+      "value": 0.78
     })
 
     response.status(200).json(output)
@@ -129,8 +137,88 @@ const getPressByUser = (request, response) => {
     response.status(200).json(output)
   }
 
+
+  const getMediaStats = (request, response) => {
+    const id = request.params.id
+  
+    /*pool.query('SELECT DISTINCT a.id, a.url, a.text, a.title, a.teaser FROM media_sentiment_article AS a JOIN media_sentiment_player msp on a.id = msp.article JOIN player p on p.id = msp.player WHERE p.id =  $1', [id], (error, results) => {
+      if (error) {
+        throw error
+      }
+      //response.status(200).json(results.rows)
+    })
+    */
+
+    output = []
+    output.push({
+      "channel": "20min",
+      "positive": [0.12,0.24,0.525,0.25,0.234,0.234],
+      "negative": [-0.25,-0.23,-0.74,-0.66],
+    },
+    {
+      "channel": "blick",
+      "positive": [0.12,0.24,0.525,0.25,0.234,0.234],
+      "negative": [-0.25,-0.23,-0.74,-0.66],
+    },
+    {
+      "channel": "srf",
+      "positive": [0.12,0.24,0.525,0.25,0.234,0.234],
+      "negative": [-0.25,-0.23,-0.74,-0.66],
+    })
+
+    response.status(200).json(output)
+  }
+
+  const getPopularitySpider = async (request, response) => {
+    const id = request.params.id
+    output = []
+
+    const resOne = await pool.query('SELECT DISTINCT a.id, a.url, a.text, a.title, a.teaser FROM media_sentiment_article AS a JOIN media_sentiment_player msp on a.id = msp.article JOIN player p on p.id = msp.player WHERE p.id =  $1', [id])
+    .then(res => res)
+    .catch(err => {throw err})
+
+    for(entry in resOne.rows) {
+      row = resOne.rows[entry]
+      output.push(row)
+    }
+    
+    output = {
+      "score_max": 24,
+      "score_now": 3,
+      "spider": [
+      {
+        "title": "Tore",
+        "prozent": 0.6
+      },
+      {
+        "title": "asdgasgas",
+        "prozent": 0.1
+      },
+      {
+        "title": "Tasgasgasstet",
+        "prozent": 0.9
+      },
+      {
+        "title": "hdfgjdfdg",
+        "prozent": 0.3
+      },
+      {
+        "title": "dustjsdhd",
+        "prozent": 0.3
+      },
+      {
+        "title": "djfdfsdg",
+        "prozent": 0.8
+      }
+    ]}
+
+    response.status(200).json(output)
+  }
+
   module.exports = {
     getPopularityByUser,
     getPressByUser,
-    getMediaByUser
+    getMediaByUser,
+    getMediaStats,
+    getPopularitySpider
   }
