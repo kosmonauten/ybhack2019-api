@@ -5,7 +5,7 @@ const connection = new Pool({
   host: process.env.DB_ADMIN_HOST,
   database: process.env.DB_ADMIN_DB,
   password: process.env.DB_ADMIN_PASS,
-  ssl: process.env.DB_ADMIN_SSL,
+  ssl: false,
   port: 5432
 })
 
