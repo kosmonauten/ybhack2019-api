@@ -1,4 +1,4 @@
-const pool = require('./db')
+const pool = require('../../db')
 
 const getPopularityByUser = (request, response) => {
   const id = request.params.id

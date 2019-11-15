@@ -1,4 +1,4 @@
-const pool = require('./db')
+const pool = require('../../db')
 
 const getPerformanceSpider = async (request, response) => {
     const id = request.params.id
