@@ -6,6 +6,7 @@ const pool = new Pool({
   database: process.env.DB_ADMIN_DB,
   password: process.env.DB_ADMIN_PASS,
   port: 5432,
+  ssl: process.env.DB_ADMIN_SSL
 })
 
 const getUsers = (request, response) => {
