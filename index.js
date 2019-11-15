@@ -27,6 +27,17 @@ app.listen(port, () => {
     console.log(`App running on port ${port}.`)
 })
 
+app.get('/v1/users', user.getUsers)
+app.get('/v1/users/:id', user.getUserById)
+app.get('/v1/popularity/press', popularity.getMediaStats)
+app.get('/v1/popularity/user/:id', popularity.getPopularityByUser)
+app.get('/v1/popularity/press/:id', popularity.getPressByUser)
+app.get('/v1/popularity/spider/:id', popularity.getPopularitySpider)
+app.get('/v1/popularity/media/:id', popularity.getMediaByUser)
+app.get('/v1/performance/spider/:id', performance.getPerformanceSpider)
+app.get('/v1/performance/user/:id', performance.getPerformanceByUser)
+
+
 app.get('/users', user.getUsers)
 app.get('/users/:id', user.getUserById)
 app.get('/popularity/press', popularity.getMediaStats)
