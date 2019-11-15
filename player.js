@@ -2,9 +2,9 @@ require('dotenv-safe').config()
 const Pool = require('pg').Pool
 const pool = new Pool({
   user: process.env.DB_ADMIN_USER,
-  host: 'localhost',
-  database: 'ybhackathon',
-  password: 'H@ckath0n2019',
+  host: process.env.DB_ADMIN_HOST,
+  database: process.env.DB_ADMIN_DB,
+  password: process.env.DB_ADMIN_PASS,
   port: 5432,
 })
 
