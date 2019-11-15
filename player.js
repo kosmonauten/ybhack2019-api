@@ -1,13 +1,4 @@
-require('dotenv-safe').config()
-const Pool = require('pg').Pool
-const pool = new Pool({
-  user: process.env.DB_ADMIN_USER,
-  host: process.env.DB_ADMIN_HOST,
-  database: process.env.DB_ADMIN_DB,
-  password: process.env.DB_ADMIN_PASS,
-  port: 5432,
-  ssl: process.env.DB_ADMIN_SSL
-})
+const pool = require('./db')
 
 const getUsers = (request, response) => {
     pool.query('SELECT * FROM player ORDER BY id ASC', (error, results) => {

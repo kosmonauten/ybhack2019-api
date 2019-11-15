@@ -4,6 +4,7 @@ const app = express()
 const port = 8080
 
 const user = require('./player')
+const popularity = require('./popularity')
 
 app.use(bodyParser.json())
 app.use(
@@ -22,4 +23,5 @@ app.listen(port, () => {
 
 app.get('/users', user.getUsers)
 app.get('/users/:id', user.getUserById)
+app.get('/popularity/user/:id', popularity.getPressByUser)
 
