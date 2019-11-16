@@ -171,48 +171,39 @@ const getPressByUser = (request, response) => {
 
   const getPopularitySpider = async (request, response) => {
     const id = request.params.id
-    output = []
 
-    const resOne = await pool.query('SELECT DISTINCT a.id, a.url, a.text, a.title, a.teaser FROM media_sentiment_article AS a JOIN media_sentiment_player msp on a.id = msp.article JOIN player p on p.id = msp.player WHERE p.id =  $1', [id])
+    const resOne = await pool.query('SELECT * FROM player_socialmediapopularity AS p WHERE p.player =  $1', [id])
     .then(res => res)
     .catch(err => {throw err})
 
-    for(entry in resOne.rows) {
-      row = resOne.rows[entry]
-      output.push(row)
-    }
+    entry = resOne.rows[0]
+
+    const resTwo = await pool.query('SELECT COUNT(*) FROM player')
+    .then(res => res)
+    .catch(err => {throw err})
     
+    console.log(resOne.rows)
+
     output = {
-      "score_max": 24,
-      "score_now": 3,
+      "score_max": parseInt(resTwo.rows[0]['count']),
+      "score_now": entry.rank,
       "spider": [
       {
-        "title": "Tore",
-        "prozent": 0.6
+        "title": "follower_total_normalized",
+        "prozent": entry.follower_total_normalized
       },
       {
-        "title": "asdgasgas",
-        "prozent": 0.1
+        "title": "insta_follower_normalized",
+        "prozent": entry.insta_follower_normalized
       },
       {
-        "title": "Tasgasgasstet",
-        "prozent": 0.9
-      },
-      {
-        "title": "hdfgjdfdg",
-        "prozent": 0.3
-      },
-      {
-        "title": "dustjsdhd",
-        "prozent": 0.3
-      },
-      {
-        "title": "djfdfsdg",
-        "prozent": 0.8
+        "title": "insta_posts_normalized",
+        "prozent": entry.insta_posts_normalized
       }
     ]}
 
     response.status(200).json(output)
+
   }
 
   module.exports = {
