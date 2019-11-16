@@ -1,5 +1,28 @@
 const pool = require('../../db')
 
+
+const getArticleIndex = async () => {
+  const resArticleIndex = await pool.query(`
+  SELECT scoring.id, SUM(scoring.score) AS score FROM (
+    SELECT player.lastname, media_sentiment_article.id, media_sentiment_article, AVG(media_sentiment_sent_list."value") AS score
+    FROM player, media_sentiment_player, media_sentiment_article, media_sentiment_sent_list
+    WHERE player.id = media_sentiment_player.player
+        AND media_sentiment_player.article = media_sentiment_article.id
+        AND media_sentiment_sent_list.article = media_sentiment_article.id
+    GROUP BY player.lastname, media_sentiment_article.id, media_sentiment_article.*
+    ) AS scoring
+    GROUP BY scoring.id
+    ORDER BY score DESC
+  `)
+  .then(res => res)
+  .catch(err => { throw err })
+    
+  return resArticleIndex.rows.reduce((r, e) => {
+    r[e.id] = e.score;
+    return r;
+  }, {});
+}
+
 const getPopularityByUser = (request, response) => {
   const id = request.params.id
 
@@ -56,42 +79,29 @@ const getPopularityByUser = (request, response) => {
   response.status(200).json(output)
 };
 
-const getPressByUser = (request, response) => {
+const getPressByUser = async (request, response) => {
     const id = request.params.id
   
-    /*pool.query('SELECT DISTINCT a.id, a.url, a.text, a.title, a.teaser FROM media_sentiment_article AS a JOIN media_sentiment_player msp on a.id = msp.article JOIN player p on p.id = msp.player WHERE p.id =  $1', [id], (error, results) => {
-      if (error) {
-        throw error
-      }
-      //response.status(200).json(results.rows)
-    })
-    */
+    const resOne = await pool.query('SELECT msa.url, msa.text, msa.id, msa.title FROM media_sentiment_player sl JOIN media_sentiment_article msa on sl.article = msa.id WHERE sl.player = $1', [id])
+    .then(res => res)
+    .catch(err => {throw err})
+
+    const resTwo = await getArticleIndex()
+  
+    console.log(resTwo)
 
     output = []
-    output.push({
-      "channel": "facebook",
-      "title": "Titlst",
-      "message": "kalsjfalökf",
-      "value": 0.22
-    },
-    {
-      "channel": "twitter",
-      "title": "Titlst",
-      "message": "kalsjfalökf",
-      "value": -0.32
-    },
-    {
-      "channel": "instagram",
-      "title": "Titlst",
-      "message": "kalsjfalökf",
-      "value": -0.56
-    },
-    {
-      "channel": "yb",
-      "title": "Titlst",
-      "message": "kalsjfalökf",
-      "value": 0.78
-    })
+    
+    for(entry in resOne.rows) {
+      row = resOne.rows[entry]
+      item = {
+        'channel': 'blick',
+        'title': row.title,
+        'text': row.text.substr(0,100) + "...",
+        'value': resTwo[row.id]
+      }
+      output.push(item)
+    }
 
     response.status(200).json(output)
   };
