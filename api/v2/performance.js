@@ -2,52 +2,53 @@ const pool = require('../../db')
 
 const getPerformanceSpider = async (request, response) => {
     const id = request.params.id
-    output = []
+    output = {}
 
-    const resOne = await pool.query('SELECT DISTINCT a.id, a.url, a.text, a.title, a.teaser FROM media_sentiment_article AS a JOIN media_sentiment_player msp on a.id = msp.article JOIN player p on p.id = msp.player WHERE p.id =  $1', [id])
+    const resOne = await pool.query('SELECT * FROM player_performance AS p WHERE p.player =  $1', [id])
     .then(res => res)
     .catch(err => {throw err})
 
-    for(entry in resOne.rows) {
-      row = resOne.rows[entry]
-      output.push(row)
-    }
+    entry = resOne.rows[0]
+
+    const resTwo = await pool.query('SELECT COUNT(*) FROM player')
+    .then(res => res)
+    .catch(err => {throw err})
     
     output = {
-      "score_max": 24,
-      "score_now": 3,
+      "score_max": parseInt(resTwo.rows[0]['count']),
+      "score_now": entry.rank_total,
       "spider": [
       {
-        "title": "Tore",
-        "prozent": 0.6
+        "title": "goals_normalized",
+        "prozent": entry.goals_normalized
       },
       {
-        "title": "asdgasgas",
-        "prozent": 0.1
+        "title": "assists_normalized",
+        "prozent": entry.assists_normalized
       },
       {
-        "title": "Tasgasgasstet",
-        "prozent": 0.9
+        "title": "minutes_to_goal",
+        "prozent": entry.minutes_to_goal
       },
       {
-        "title": "hdfgjdfdg",
-        "prozent": 0.3
+        "title": "minutes_to_assists",
+        "prozent": entry.minutes_to_assists
       },
       {
-        "title": "dustjsdhd",
-        "prozent": 0.3
+        "title": "minutes_normalized",
+        "prozent": entry.minutes_normalized
       },
       {
-        "title": "djfdfsdg",
-        "prozent": 0.8
+        "title": "lineups_normalized",
+        "prozent": entry.lineups_normalized
       },
       {
-        "title": "Tstet",
-        "prozent": 0.6
+        "title": "appearances_normalized",
+        "prozent": entry.appearances_normalized
       },
       {
-        "title": "Tstet",
-        "prozent": 0.6
+        "title": "yellow_normalized",
+        "prozent": entry.yellow_normalized
       }
     ]}
 
